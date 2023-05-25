@@ -1014,13 +1014,18 @@ class Tokenizer(metaclass=_Tokenizer):
 
         return self._text
 
+    def _create_escape_transformer(self, quote: str) -> t.Callable[[str], str]:
+        return lambda escape: escape
+
     def _scan_string(self, quote: str) -> bool:
         quote_end = self._QUOTES.get(quote)
         if quote_end is None:
             return False
 
         self._advance(len(quote))
-        text = self._extract_string(quote_end)
+        text = self._extract_string(
+            quote_end, escape_transformer=self._create_escape_transformer(quote)
+        )
         text = text.encode(self.ENCODE).decode(self.ENCODE) if self.ENCODE else text
         self._add(TokenType.NATIONAL if quote[0].upper() == "N" else TokenType.STRING, text)
         return True
@@ -1076,10 +1081,16 @@ class Tokenizer(metaclass=_Tokenizer):
             else self.KEYWORDS.get(self._text.upper(), TokenType.VAR)
         )
 
-    def _extract_string(self, delimiter: str, escapes=None) -> str:
+    def _extract_string(
+        self,
+        delimiter: str,
+        escapes: t.Optional[t.Set[str]] = None,
+        escape_transformer: t.Optional[t.Callable[[str], str]] = None,
+    ) -> str:
         text = ""
         delim_size = len(delimiter)
         escapes = self._STRING_ESCAPES if escapes is None else escapes
+        escape_transformer = escape_transformer or (lambda escape: escape)
 
         while True:
             if self._char in escapes and (self._peek == delimiter or self._peek in escapes):
@@ -1103,6 +1114,6 @@ class Tokenizer(metaclass=_Tokenizer):
 
                 current = self._current - 1
                 self._advance(alnum=True)
-                text += self.sql[current : self._current - 1]
+                text += escape_transformer(self.sql[current : self._current - 1])
 
         return text

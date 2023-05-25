@@ -142,6 +142,14 @@ class BigQuery(Dialect):
         }
         KEYWORDS.pop("DIV")
 
+        def _create_escape_transformer(self, quote: str) -> t.Callable[[str], str]:
+            def transformer(escape: str) -> str:
+                if quote.lower().startswith("r"):
+                    return escape.replace("\\", "\\\\")
+                return escape
+
+            return transformer
+
     class Parser(parser.Parser):
         PREFIXED_PIVOT_COLUMNS = True
 

@@ -88,11 +88,11 @@ class TestBigQuery(Validator):
         self.validate_all(
             r'r"""/\*.*\*/"""',
             write={
-                "bigquery": r"'/\*.*\*/'",
-                "duckdb": r"'/\*.*\*/'",
-                "presto": r"'/\*.*\*/'",
-                "hive": r"'/\*.*\*/'",
-                "spark": r"'/\*.*\*/'",
+                "bigquery": r"'/\\*.*\\*/'",
+                "duckdb": r"'/\\*.*\\*/'",
+                "presto": r"'/\\*.*\\*/'",
+                "hive": r"'/\\*.*\\*/'",
+                "spark": r"'/\\*.*\\*/'",
             },
         )
         with self.assertRaises(ValueError):
@@ -110,11 +110,11 @@ class TestBigQuery(Validator):
         self.validate_all(
             r'R"""/\*.*\*/"""',
             write={
-                "bigquery": r"'/\*.*\*/'",
-                "duckdb": r"'/\*.*\*/'",
-                "presto": r"'/\*.*\*/'",
-                "hive": r"'/\*.*\*/'",
-                "spark": r"'/\*.*\*/'",
+                "bigquery": r"'/\\*.*\\*/'",
+                "duckdb": r"'/\\*.*\\*/'",
+                "presto": r"'/\\*.*\\*/'",
+                "hive": r"'/\\*.*\\*/'",
+                "spark": r"'/\\*.*\\*/'",
             },
         )
         self.validate_all(
